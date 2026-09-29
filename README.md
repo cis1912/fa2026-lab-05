@@ -70,8 +70,8 @@ Delete the manual deployments and install both as Helm releases instead:
 kubectl delete -f manual/dev -n dev
 kubectl delete -f manual/prod -n prod
 
-helm install 2048-dev ./2048 -n dev
-helm install 2048-prod ./2048 -f 2048/values-prod.yaml -n prod
+helm install dev-2048 ./2048 -n dev
+helm install prod-2048 ./2048 -f 2048/values-prod.yaml -n prod
 
 helm list -A
 ```
@@ -81,8 +81,8 @@ helm list -A
 Ops pages again — double the memory limit once more. This time, edit two numbers instead of two manifests: bump `resources.limits.memory` in `2048/values.yaml` and in `2048/values-prod.yaml`, then:
 
 ```bash
-helm upgrade 2048-dev ./2048 -n dev
-helm upgrade 2048-prod ./2048 -f 2048/values-prod.yaml -n prod
+helm upgrade dev-2048 ./2048 -n dev
+helm upgrade prod-2048 ./2048 -f 2048/values-prod.yaml -n prod
 ```
 
 Same real change as Part 1 — this time it's two small, readable values files instead of two full manifests, and `helm upgrade` does the applying.
@@ -92,14 +92,14 @@ Same real change as Part 1 — this time it's two small, readable values files i
 Every `helm upgrade` creates a new numbered release revision:
 
 ```bash
-helm history 2048-prod -n prod
+helm history prod-2048 -n prod
 ```
 
 With hand-written YAML, undoing a change means finding an old copy of the file — if you kept one. With Helm:
 
 ```bash
-helm rollback 2048-prod 1 -n prod
-kubectl get deployment 2048-prod-2048 -n prod -o jsonpath='{.spec.template.spec.containers[0].resources.limits.memory}'
+helm rollback prod-2048 1 -n prod
+kubectl get deployment prod-2048 -n prod -o jsonpath='{.spec.template.spec.containers[0].resources.limits.memory}'
 ```
 
 That should print the original `512Mi`.
